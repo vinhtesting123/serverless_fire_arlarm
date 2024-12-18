@@ -1,7 +1,14 @@
-module.exports = async (req, res) => {
+module.exports = (req, res) => {
     try {
-        // Parse JSON dữ liệu từ body
-        const { temperature, smokeLevel } = JSON.parse(req.body);
+        // Kiểm tra xem request có body không và nó có phải là JSON hợp lệ không
+        const { temperature, smokeLevel } = req.body;
+
+        if (typeof temperature === 'undefined' || typeof smokeLevel === 'undefined') {
+            return res.status(400).json({
+                status: "error",
+                message: "Dữ liệu không hợp lệ, vui lòng gửi đầy đủ thông tin!"
+            });
+        }
 
         // Kiểm tra điều kiện cảnh báo cháy
         if (temperature > 60 || smokeLevel > 80) {
@@ -16,7 +23,6 @@ module.exports = async (req, res) => {
             });
         }
     } catch (error) {
-        // Bắt lỗi nếu JSON không hợp lệ hoặc có vấn đề trong hàm
         res.status(500).json({
             status: "error",
             message: "Đã xảy ra lỗi khi xử lý dữ liệu!",

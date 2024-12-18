@@ -1,0 +1,9 @@
+{
+  "name": "serverless_fire_arlarm",
+  "version": "1.0.0",
+  "description": "Serverless demo with MQTT",
+  "main": "index.js",
+  "dependencies": {
+    "mqtt": "^4.3.7"
+  }
+}

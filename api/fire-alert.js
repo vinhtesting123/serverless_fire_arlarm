@@ -1,7 +1,7 @@
 // Kết nối tới MQTT WebSocket endpoint
 const WebSocket = require('ws');
 
-const ws = new WebSocket('wss://broker.hivemq.com:8000/mqtt');
+const ws = new WebSocket('ws://broker.hivemq.com:8000/mqtt');
 
 // Khi kết nối thành công
 ws.on('open', function open() {

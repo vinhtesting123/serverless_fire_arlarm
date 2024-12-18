@@ -1,42 +1,48 @@
-module.exports = async (req, res) => {
-    try {
-        // Check if the request is a POST
-        if (req.method !== 'POST') {
-            return res.status(405).json({
-                status: "error",
-                message: "Method Not Allowed. Please use POST."
-            });
-        }
+// Kết nối tới MQTT WebSocket endpoint
+const WebSocket = require('ws');
 
-        // Get the message data from the incoming webhook request body
-        const { temperature, smokeLevel } = req.body;
+const ws = new WebSocket('ws://broker.hivemq.com:8000/mqtt');
 
-        // Validate the data to ensure the necessary fields are provided
-        if (typeof temperature === 'undefined' || typeof smokeLevel === 'undefined') {
-            return res.status(400).json({
-                status: "error",
-                message: "Dữ liệu không hợp lệ, vui lòng gửi đầy đủ thông tin (temperature và smokeLevel)."
-            });
-        }
+// Khi kết nối thành công
+ws.on('open', function open() {
+    console.log('Đã kết nối tới MQTT WebSocket');
+    // Đăng ký vào topic
+    ws.send(JSON.stringify({
+        "type": "subscribe",
+        "topic": "vinh/hello"
+    }));
+});
 
-        // Check for fire hazards based on the data
-        if (temperature > 60 || smokeLevel > 80) {
-            return res.status(200).json({
-                status: "warning",
-                message: "🔥 Cảnh báo cháy! Nhiệt độ hoặc mức khói vượt ngưỡng an toàn."
-            });
-        } else {
-            return res.status(200).json({
-                status: "safe",
-                message: "✅ Mọi thứ an toàn."
-            });
-        }
-    } catch (error) {
-        // Return an error response if something goes wrong
-        return res.status(500).json({
+// Nhận dữ liệu từ topic
+ws.on('message', function incoming(data) {
+    console.log('Dữ liệu nhận được:', data);
+
+    const messageData = JSON.parse(data);
+
+    // Kiểm tra và xử lý dữ liệu
+    const { temperature, smokeLevel } = messageData;
+
+    if (typeof temperature === 'undefined' || typeof smokeLevel === 'undefined') {
+        return {
             status: "error",
-            message: "Đã xảy ra lỗi khi xử lý dữ liệu!",
-            error: error.message,
-        });
+            message: "Dữ liệu không hợp lệ, vui lòng gửi đầy đủ thông tin!"
+        };
     }
-};
+
+    if (temperature > 60 || smokeLevel > 80) {
+        return {
+            status: "warning",
+            message: "🔥 Cảnh báo cháy! Nhiệt độ hoặc mức khói vượt ngưỡng an toàn."
+        };
+    } else {
+        return {
+            status: "safe",
+            message: "✅ Mọi thứ an toàn."
+        };
+    }
+});
+
+// Nếu có lỗi xảy ra
+ws.on('error', function error(err) {
+    console.log('Lỗi kết nối:', err);
+});

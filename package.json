@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "Serverless demo with MQTT",
   "dependencies": {
-    "mqtt": "^4.3.7"
+    "mqtt": "^4.3.7",
+    "nodemailer": "^6.9.3"
+
   }
 }

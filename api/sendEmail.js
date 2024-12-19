@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     // Replace with your email credentials
     const emailUser = "21004229@st.vlute.edu.vn"; // Replace with your email
     const emailPass = "J@mahaga456"; // Replace with your email password
-    const recipient = "your-email@example.com"; // Send to your own email
+    const recipient = "21004229@st.vlute.edu.vn"; // Send to your own email
     const subject = "Test Email Subject"; // Subject line (can be anything)
     const message = "This is a test email body."; // Message body (can be anything)
 
